@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "repl_nix_site-iyuans-1"
+version = "0.1.0"
+description = ""
+authors = ["Replit user <<>>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pytz = "^2022.6"
+typogrify = "^2.0.7"
+Flask-Cors = "^3.0.10"
+javascript = "^2015.32.59"
+Jinja2 = "^3.1.2"
+Pillow = "^9.3.0"
+pygame = "^2.1.2"
+pytest-browser = "^0.2.0"
+pelican = "^4.8.0"
+fabric = "^2.7.1"
+gevent = "^22.10.2"
+bs4 = "^0.0.1"
+Flask = "^2.2.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
