@@ -130,7 +130,7 @@ img.add_border {
                             <li><a href="./../blog/index.html">blog</a></li>
                         </ul>
                       </li>
-                     <li><a href='About.html'>About</a><li class='has-children'><a href='cp2022.html'>cp2022</a><ul class='dropdown'><li><a href='個人簡歷與課程進度心得.html'>個人簡歷與課程進度心得</a></li></ul><li class='has-children'><a href='HW.html'>HW</a><ul class='dropdown'><li><a href='W10.html'>W10</a><li><a href='W11.html'>W11</a><li><a href='W12.html'>W12</a><li><a href='W13.html'>W13</a><li><a href='W14.html'>W14</a><li><a href='W15.html'>W15</a><li class='has-children'><a href='W16.html'>W16</a><ul class='dropdown'><li><a href='h2.html'>h2</a></li></li></ul></ul><li class='has-children'><a href='顏.html'>顏</a><ul class='dropdown'><li><a href='1.html'>1</a></li></ul><li><a href='Brython.html'>Brython</a></li>
+                     <li><a href='About.html'>About</a><li class='has-children'><a href='cp2022.html'>cp2022</a><ul class='dropdown'><li><a href='個人簡歷與課程進度心得.html'>個人簡歷與課程進度心得</a></li></ul><li class='has-children'><a href='HW.html'>HW</a><ul class='dropdown'><li><a href='W10.html'>W10</a><li><a href='W11.html'>W11</a><li><a href='W12.html'>W12</a><li><a href='W13.html'>W13</a><li><a href='W14.html'>W14</a><li><a href='W15.html'>W15</a><li><a href='W16.html'>W16</a></li></ul><li class='has-children'><a href='顏.html'>顏</a><ul class='dropdown'><li><a href='1.html'>1</a></li></ul><li><a href='Brython.html'>Brython</a></li>
                       </ul>
                 </nav>
               </div>
@@ -141,8 +141,187 @@ img.add_border {
           </div>
           
         </header>
-    <div id="tipue_search_content">W15 << <a href='W15.html'>Previous</a> <a href='h2.html'>Next</a> >> h2<br /><h1>W16</h1>
-<br />W15 << <a href='W15.html'>Previous</a> <a href='h2.html'>Next</a> >> h2</div>
+    <div id="tipue_search_content">W15 << <a href='W15.html'>Previous</a> <a href='顏.html'>Next</a> >> 顏<br /><h1>W16</h1>
+<pre class="brush:html;auto-links:false;toolbar:false" contenteditable="false"># 這個程式用於 demo 綠色方塊沿著特定網格路徑行走
+# 從 Brython 程式庫中的 browser 模組導入 document 類別, 並以簡寫設定為 doc
+from browser import document as doc
+# 從 browser 模組導入 html 類別, 主要用於建立 CANVAS 標註物件, 並插入頁面中
+from browser import html
+# 用於定時執行特定函式
+import browser.timer
+# 導入亂數模組
+from random import random, randint
+
+# 利用 html 建立一個 CANVAS 標註物件, 與變數 canvas 對應
+canvas = html.CANVAS(width = 600, height = 600)
+# 將 canvas 標註的 id 設為 "canvas"
+canvas.id = "canvas"
+# 將 document 中 id 為 "brython_div" 的標註 
+# 設為與 brython_div 變數對應
+brython_div = doc["brython_div1"]
+# 將 canvas 標註放入 brython_div1 所在位置
+# 頁面中原本就已經放入 &lt;div id="brython_div"&gt;&lt;/div&gt; 標註
+brython_div &lt;= canvas
+# 將頁面中 id 為 canvas 的 CANVAS 設為與 canvas 變數對應
+canvas = doc["canvas"]
+# 將 canvas 的 2d 繪圖 context 命名為 ctx
+ctx = canvas.getContext("2d")
+
+# 建立一個 dRect() 函式
+# s default 為 1, c defaul 為紅色
+def dRect(lux, luy, w, h, s=1, c='#ff0000'):
+    ctx.lineWidth = s
+    ctx.strokeStyle = c
+    ctx.beginPath();
+    ctx.rect(lux, luy, w, h)
+    ctx.stroke();
+
+# 建立畫直線函式
+def draw_line(x1, y1, x2, y2, color="#ff0000"):
+    ctx.beginPath()
+    ctx.moveTo(x1, y1)
+    ctx.lineTo(x2, y2)
+    ctx.strokeStyle = color
+    ctx.stroke()
+
+# 建立 write Text 函式
+def wText(x, y, t, s=14, c='#0000ff'):
+    ctx.font = str(s) + "px Arial";
+    ctx.fillText(t, x, y)
+
+# 定義畫格線的函式
+def grid(startx, starty, w, h, wnum, hnum, pixel=1, color="#ff0000"):
+    # 利用迴圈與座標增量繪圖
+    # 因為輸入 wnum 與 hnum 為格子數, 畫格線數則需加上 1
+    for i in range(wnum+1):
+        for j in range(hnum+1):
+            # 畫上下直線
+            yend = starty + h*(hnum)
+            xend = startx + w*(wnum)
+            x = startx + i*w
+            draw_line(x, starty, x, yend, color)
+            # 畫左右直線
+            y = starty + j*h
+            draw_line(startx, y, xend, y, color)
+            #wText(w/2-10, y-w/2, str(j))
+
+# 從兩個座標點求中心點座標
+def center(lx, ly, rx, ry):
+    # lx is x coord of the left up corner
+    # rx is the x coord of th right down corner
+    x = (lx + rx)/2
+    y = (ly + ry)/2
+    return x, y
+
+# 畫出填色方塊
+def draw_rect(gx, gy, gw, gh, color="lime"):
+    # gx is the grid coord at x direction
+    # gy is the grid coord at y direction
+    # gw is the with of the green rect
+    # gh is the height of the green rect
+    lx = origx + (gx-1)*w
+    ly = origy + (gy-1)*h
+    rx = origx + gx*w
+    ry = origy + gy*h
+    cx, cy = center(lx, ly, rx, ry)
+    # glx is the x coord of the left corner
+    # gly is the y coord of the left corner
+    glx = cx - gw/2
+    gly = cy - gh/2
+    # 利用設定的顏色值畫出 rectangle
+    ctx.fillStyle = color
+    ctx.fillRect(glx, gly, gw, gh)
+
+# 以白色覆蓋位於 (nowx, nowy) 
+# 且比目標方塊長寬各大於 1 pixel的方塊
+def wipe():
+    draw_rect(nowx, nowy, 30+1, 30+1, color="white")
+
+# 畫出位於 (nowx, nowy) 的綠色方塊
+def draw():
+    draw_rect(nowx, nowy, 30, 30, color="lime")
+
+# 繞8字走
+def walk():
+    global stepx, stepy
+
+     # 向右
+    if nowx == 1 and nowy == 1:
+        stepx = 1
+        stepy = 0
+    # 向下
+    if nowy == 1  and nowx == 8:
+        stepx = 0
+        stepy = 1
+    # 向右
+    if nowx == 8 and nowy == 15:
+        stepx = 1
+        stepy = 0
+    # 向上
+    if nowy == 15 and nowx == 15:
+        stepx = 0
+        stepy = -1
+    # 向左
+    if nowx == 15 and nowy == 8:
+        stepx = -1
+        stepy = 0
+   # 向上
+    elif nowy == 8 and nowx == 1:
+        stepx = 0
+        stepy = -1
+
+# 每隔短暫時間即呼叫執行一次的函式
+def game():
+    # 因 nowx 與 nowy 在函式外宣告
+    # 且在函式內改變對應值, 因此需宣告為 global
+    global nowx, nowy
+    walk()
+    wipe()
+    nowx += stepx
+    nowy += stepy
+    draw()
+
+# 綠色方塊起點座標與 x 及 y 方向的座標增量
+nowx = 1
+nowy = 1
+stepx = 0
+stepy = 0
+# 設定格數
+# width 方向格子數
+wnum = 15
+# height 方向格子數
+hnum = 15
+# 設定線寬
+pixel = 1
+# 設定 w 寬度
+w = int(canvas.width/wnum) - pixel
+# 設定 h 高度
+h = int(canvas.height/hnum) - pixel
+# 設定繪圖座標點起點位置
+origx = 1
+origy = 1
+# 利用 grid 函式畫出格線
+grid(origx, origy, w, h, wnum, hnum, pixel=1, color="black")
+
+'''
+# 利用 draw_rect 以 grid 座標畫出正方形, 內建為 lime
+draw_rect(3, 3, 30, 30)
+
+# 利用隨機亂數產生五個紅色方塊
+# wnum 與 hnum 為 x 與 y 方向的格子個數
+# w 與 h 方向上的方塊 pixel 數
+wrect_size = 30
+hrect_size = 30
+# 利用 for 迴圈產生五個紅色方塊
+for i in range(5):
+    xcoord = randint(1, wnum)
+    ycoord = randint(1, hnum)
+    draw_rect(xcoord, ycoord, wrect_size, hrect_size, color="red")
+'''
+browser.timer.set_interval(game, 100)</pre>
+<p><br/><br/>W16</p>
+<p><br/><br/></p>
+<br />W15 << <a href='W15.html'>Previous</a> <a href='顏.html'>Next</a> >> 顏</div>
         
     <!-- footer -->
       <div class="container">
